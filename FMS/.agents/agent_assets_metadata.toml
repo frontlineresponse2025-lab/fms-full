@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "m0SVbS9oIyWz-DUGZsQHk"
+uri = "file://fms-project.zip"
+type = "unspecified"
+title = "FMS Project Code"

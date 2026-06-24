@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Force Management System"
+version = "1.0.0"
+id = "artifacts/fms"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24506
+
+[services.development]
+run = "pnpm --filter @workspace/fms run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/fms", "run", "build" ]
+publicDir = "artifacts/fms/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24506"
+BASE_PATH = "/"

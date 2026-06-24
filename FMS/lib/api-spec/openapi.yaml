@@ -1,0 +1,1084 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Force Management System API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: members
+    description: Member roster management
+  - name: ranks
+    description: Rank/hierarchy management
+  - name: departments
+    description: Department management
+  - name: patrol-logs
+    description: Patrol log management
+  - name: applications
+    description: Application management
+  - name: disciplinary
+    description: Disciplinary records
+  - name: activity
+    description: Activity tracking
+  - name: whitelist
+    description: Whitelist management
+  - name: careers
+    description: Career/position management
+  - name: stats
+    description: Dashboard statistics
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # Members
+  /members:
+    get:
+      operationId: listMembers
+      tags: [members]
+      summary: List all members
+      parameters:
+        - name: departmentId
+          in: query
+          schema: { type: integer }
+        - name: rankId
+          in: query
+          schema: { type: integer }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Member"
+    post:
+      operationId: createMember
+      tags: [members]
+      summary: Add a member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemberInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member"
+
+  /members/{id}:
+    get:
+      operationId: getMember
+      tags: [members]
+      summary: Get member by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateMember
+      tags: [members]
+      summary: Update a member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemberUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member"
+    delete:
+      operationId: deleteMember
+      tags: [members]
+      summary: Remove a member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # Ranks
+  /ranks:
+    get:
+      operationId: listRanks
+      tags: [ranks]
+      summary: List all ranks
+      responses:
+        "200":
+          description: List of ranks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Rank"
+    post:
+      operationId: createRank
+      tags: [ranks]
+      summary: Create a rank
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RankInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rank"
+
+  /ranks/{id}:
+    patch:
+      operationId: updateRank
+      tags: [ranks]
+      summary: Update a rank
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RankUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rank"
+    delete:
+      operationId: deleteRank
+      tags: [ranks]
+      summary: Delete a rank
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # Departments
+  /departments:
+    get:
+      operationId: listDepartments
+      tags: [departments]
+      summary: List all departments
+      responses:
+        "200":
+          description: List of departments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Department"
+    post:
+      operationId: createDepartment
+      tags: [departments]
+      summary: Create a department
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+
+  /departments/{id}:
+    patch:
+      operationId: updateDepartment
+      tags: [departments]
+      summary: Update a department
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+    delete:
+      operationId: deleteDepartment
+      tags: [departments]
+      summary: Delete a department
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # Patrol Logs
+  /patrol-logs:
+    get:
+      operationId: listPatrolLogs
+      tags: [patrol-logs]
+      summary: List patrol logs
+      parameters:
+        - name: memberId
+          in: query
+          schema: { type: integer }
+        - name: startDate
+          in: query
+          schema: { type: string }
+        - name: endDate
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of patrol logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatrolLog"
+    post:
+      operationId: createPatrolLog
+      tags: [patrol-logs]
+      summary: Log a patrol
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatrolLogInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatrolLog"
+
+  /patrol-logs/{id}:
+    patch:
+      operationId: updatePatrolLog
+      tags: [patrol-logs]
+      summary: Update a patrol log
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatrolLogUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatrolLog"
+    delete:
+      operationId: deletePatrolLog
+      tags: [patrol-logs]
+      summary: Delete a patrol log
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # Applications
+  /applications:
+    get:
+      operationId: listApplications
+      tags: [applications]
+      summary: List applications
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Application"
+    post:
+      operationId: createApplication
+      tags: [applications]
+      summary: Submit an application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /applications/{id}:
+    get:
+      operationId: getApplication
+      tags: [applications]
+      summary: Get application by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+    patch:
+      operationId: updateApplication
+      tags: [applications]
+      summary: Update/review an application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  # Disciplinary Records
+  /disciplinary:
+    get:
+      operationId: listDisciplinary
+      tags: [disciplinary]
+      summary: List disciplinary records
+      parameters:
+        - name: memberId
+          in: query
+          schema: { type: integer }
+        - name: type
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of disciplinary records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DisciplinaryRecord"
+    post:
+      operationId: createDisciplinary
+      tags: [disciplinary]
+      summary: Create a disciplinary record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DisciplinaryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DisciplinaryRecord"
+
+  /disciplinary/{id}:
+    patch:
+      operationId: updateDisciplinary
+      tags: [disciplinary]
+      summary: Update a disciplinary record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DisciplinaryUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DisciplinaryRecord"
+    delete:
+      operationId: deleteDisciplinary
+      tags: [disciplinary]
+      summary: Delete a disciplinary record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # Activity
+  /activity:
+    get:
+      operationId: listActivity
+      tags: [activity]
+      summary: List activity records
+      parameters:
+        - name: memberId
+          in: query
+          schema: { type: integer }
+        - name: startDate
+          in: query
+          schema: { type: string }
+        - name: endDate
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of activity records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityRecord"
+
+  /activity/leaderboard:
+    get:
+      operationId: getActivityLeaderboard
+      tags: [activity]
+      summary: Get top active members
+      responses:
+        "200":
+          description: Leaderboard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityRecord"
+
+  # Whitelist
+  /whitelist:
+    get:
+      operationId: listWhitelist
+      tags: [whitelist]
+      summary: List whitelist entries
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of whitelist entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WhitelistEntry"
+    post:
+      operationId: createWhitelistEntry
+      tags: [whitelist]
+      summary: Add a whitelist entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WhitelistInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WhitelistEntry"
+
+  /whitelist/{id}:
+    patch:
+      operationId: updateWhitelistEntry
+      tags: [whitelist]
+      summary: Update a whitelist entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WhitelistUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WhitelistEntry"
+    delete:
+      operationId: deleteWhitelistEntry
+      tags: [whitelist]
+      summary: Remove from whitelist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # Careers
+  /careers:
+    get:
+      operationId: listCareers
+      tags: [careers]
+      summary: List career positions
+      parameters:
+        - name: departmentId
+          in: query
+          schema: { type: integer }
+        - name: isOpen
+          in: query
+          schema: { type: boolean }
+      responses:
+        "200":
+          description: List of career positions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Career"
+    post:
+      operationId: createCareer
+      tags: [careers]
+      summary: Create a career position
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Career"
+
+  /careers/{id}:
+    patch:
+      operationId: updateCareer
+      tags: [careers]
+      summary: Update a career position
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Career"
+    delete:
+      operationId: deleteCareer
+      tags: [careers]
+      summary: Delete a career position
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+
+  # Stats
+  /stats/dashboard:
+    get:
+      operationId: getDashboardStats
+      tags: [stats]
+      summary: Get dashboard statistics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /stats/patrol-summary:
+    get:
+      operationId: getPatrolSummary
+      tags: [stats]
+      summary: Get patrol hour summary by member
+      responses:
+        "200":
+          description: Patrol summary
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatrolSummary"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    # Member schemas
+    Member:
+      type: object
+      required: [id, discordUsername, status, joinedAt]
+      properties:
+        id: { type: integer }
+        discordId: { type: ["string", "null"] }
+        discordUsername: { type: string }
+        callsign: { type: ["string", "null"] }
+        characterName: { type: ["string", "null"] }
+        rankId: { type: ["integer", "null"] }
+        rankName: { type: ["string", "null"] }
+        departmentId: { type: ["integer", "null"] }
+        departmentName: { type: ["string", "null"] }
+        status: { type: string }
+        notes: { type: ["string", "null"] }
+        joinedAt: { type: string }
+        totalPatrolHours: { type: ["number", "null"] }
+
+    MemberInput:
+      type: object
+      required: [discordUsername, status]
+      properties:
+        discordId: { type: string }
+        discordUsername: { type: string }
+        callsign: { type: string }
+        characterName: { type: string }
+        rankId: { type: integer }
+        departmentId: { type: integer }
+        status: { type: string }
+        notes: { type: string }
+
+    MemberUpdate:
+      type: object
+      properties:
+        discordId: { type: string }
+        discordUsername: { type: string }
+        callsign: { type: string }
+        characterName: { type: string }
+        rankId: { type: ["integer", "null"] }
+        departmentId: { type: ["integer", "null"] }
+        status: { type: string }
+        notes: { type: string }
+
+    # Rank schemas
+    Rank:
+      type: object
+      required: [id, name, level]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        level: { type: integer }
+        description: { type: ["string", "null"] }
+        color: { type: ["string", "null"] }
+        discordRoleId: { type: ["string", "null"] }
+        memberCount: { type: ["integer", "null"] }
+
+    RankInput:
+      type: object
+      required: [name, level]
+      properties:
+        name: { type: string }
+        level: { type: integer }
+        description: { type: string }
+        color: { type: string }
+        discordRoleId: { type: string }
+
+    RankUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        level: { type: integer }
+        description: { type: string }
+        color: { type: string }
+        discordRoleId: { type: string }
+
+    # Department schemas
+    Department:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: ["string", "null"] }
+        color: { type: ["string", "null"] }
+        discordRoleId: { type: ["string", "null"] }
+        leaderId: { type: ["integer", "null"] }
+        leaderName: { type: ["string", "null"] }
+        memberCount: { type: ["integer", "null"] }
+
+    DepartmentInput:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        color: { type: string }
+        discordRoleId: { type: string }
+        leaderId: { type: integer }
+
+    DepartmentUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        color: { type: string }
+        discordRoleId: { type: string }
+        leaderId: { type: ["integer", "null"] }
+
+    # Patrol Log schemas
+    PatrolLog:
+      type: object
+      required: [id, memberId, startTime]
+      properties:
+        id: { type: integer }
+        memberId: { type: integer }
+        memberName: { type: ["string", "null"] }
+        startTime: { type: string }
+        endTime: { type: ["string", "null"] }
+        durationMinutes: { type: ["integer", "null"] }
+        server: { type: ["string", "null"] }
+        notes: { type: ["string", "null"] }
+        createdAt: { type: string }
+
+    PatrolLogInput:
+      type: object
+      required: [memberId, startTime]
+      properties:
+        memberId: { type: integer }
+        startTime: { type: string }
+        endTime: { type: string }
+        durationMinutes: { type: integer }
+        server: { type: string }
+        notes: { type: string }
+
+    PatrolLogUpdate:
+      type: object
+      properties:
+        startTime: { type: string }
+        endTime: { type: string }
+        durationMinutes: { type: integer }
+        server: { type: string }
+        notes: { type: string }
+
+    # Application schemas
+    Application:
+      type: object
+      required: [id, applicantName, type, status, submittedAt]
+      properties:
+        id: { type: integer }
+        applicantName: { type: string }
+        discordId: { type: ["string", "null"] }
+        discordUsername: { type: ["string", "null"] }
+        type: { type: string }
+        careerId: { type: ["integer", "null"] }
+        careerTitle: { type: ["string", "null"] }
+        status: { type: string }
+        answers: { type: ["string", "null"] }
+        reviewedBy: { type: ["string", "null"] }
+        reviewNotes: { type: ["string", "null"] }
+        submittedAt: { type: string }
+        reviewedAt: { type: ["string", "null"] }
+
+    ApplicationInput:
+      type: object
+      required: [applicantName, type]
+      properties:
+        applicantName: { type: string }
+        discordId: { type: string }
+        discordUsername: { type: string }
+        type: { type: string }
+        careerId: { type: integer }
+        answers: { type: string }
+
+    ApplicationUpdate:
+      type: object
+      properties:
+        status: { type: string }
+        reviewedBy: { type: string }
+        reviewNotes: { type: string }
+
+    # Disciplinary schemas
+    DisciplinaryRecord:
+      type: object
+      required: [id, memberId, type, reason, issuedAt]
+      properties:
+        id: { type: integer }
+        memberId: { type: integer }
+        memberName: { type: ["string", "null"] }
+        type: { type: string }
+        reason: { type: string }
+        issuedBy: { type: ["string", "null"] }
+        issuedAt: { type: string }
+        expiresAt: { type: ["string", "null"] }
+        notes: { type: ["string", "null"] }
+        active: { type: boolean }
+
+    DisciplinaryInput:
+      type: object
+      required: [memberId, type, reason]
+      properties:
+        memberId: { type: integer }
+        type: { type: string }
+        reason: { type: string }
+        issuedBy: { type: string }
+        expiresAt: { type: string }
+        notes: { type: string }
+
+    DisciplinaryUpdate:
+      type: object
+      properties:
+        type: { type: string }
+        reason: { type: string }
+        issuedBy: { type: string }
+        expiresAt: { type: ["string", "null"] }
+        notes: { type: string }
+        active: { type: boolean }
+
+    # Activity schemas
+    ActivityRecord:
+      type: object
+      required: [memberId, memberName, totalPatrolHours]
+      properties:
+        memberId: { type: integer }
+        memberName: { type: string }
+        rankName: { type: ["string", "null"] }
+        departmentName: { type: ["string", "null"] }
+        totalPatrolHours: { type: number }
+        patrolCount: { type: integer }
+        lastPatrol: { type: ["string", "null"] }
+
+    # Whitelist schemas
+    WhitelistEntry:
+      type: object
+      required: [id, discordId, status]
+      properties:
+        id: { type: integer }
+        discordId: { type: string }
+        discordUsername: { type: ["string", "null"] }
+        characterName: { type: ["string", "null"] }
+        status: { type: string }
+        addedBy: { type: ["string", "null"] }
+        addedAt: { type: string }
+        notes: { type: ["string", "null"] }
+
+    WhitelistInput:
+      type: object
+      required: [discordId, status]
+      properties:
+        discordId: { type: string }
+        discordUsername: { type: string }
+        characterName: { type: string }
+        status: { type: string }
+        addedBy: { type: string }
+        notes: { type: string }
+
+    WhitelistUpdate:
+      type: object
+      properties:
+        discordUsername: { type: string }
+        characterName: { type: string }
+        status: { type: string }
+        addedBy: { type: string }
+        notes: { type: string }
+
+    # Career schemas
+    Career:
+      type: object
+      required: [id, title, isOpen]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        departmentId: { type: ["integer", "null"] }
+        departmentName: { type: ["string", "null"] }
+        description: { type: ["string", "null"] }
+        requirements: { type: ["string", "null"] }
+        isOpen: { type: boolean }
+        createdAt: { type: string }
+        applicationCount: { type: ["integer", "null"] }
+
+    CareerInput:
+      type: object
+      required: [title, isOpen]
+      properties:
+        title: { type: string }
+        departmentId: { type: integer }
+        description: { type: string }
+        requirements: { type: string }
+        isOpen: { type: boolean }
+
+    CareerUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        departmentId: { type: ["integer", "null"] }
+        description: { type: string }
+        requirements: { type: string }
+        isOpen: { type: boolean }
+
+    # Stats schemas
+    DashboardStats:
+      type: object
+      required: [totalMembers, activeMembers, pendingApplications, totalPatrolHours, openPositions, whitelistedCount]
+      properties:
+        totalMembers: { type: integer }
+        activeMembers: { type: integer }
+        pendingApplications: { type: integer }
+        totalPatrolHours: { type: number }
+        openPositions: { type: integer }
+        whitelistedCount: { type: integer }
+        suspendedMembers: { type: integer }
+        departmentBreakdown:
+          type: array
+          items:
+            type: object
+            required: [name, count]
+            properties:
+              name: { type: string }
+              count: { type: integer }
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityRecord"
+
+    PatrolSummary:
+      type: object
+      required: [memberId, memberName, totalHours, patrolCount]
+      properties:
+        memberId: { type: integer }
+        memberName: { type: string }
+        totalHours: { type: number }
+        patrolCount: { type: integer }
+        lastPatrol: { type: ["string", "null"] }
